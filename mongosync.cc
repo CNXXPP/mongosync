@@ -1079,7 +1079,7 @@ std::string MongoSync::GetMongoVersion(mongo::DBClientConnection* conn) {
 int MongoSync::GetAllCollByVersion(mongo::DBClientConnection* conn, std::string version, std::string db, std::vector<std::string>& colls) {
 	std::string version_header = version.substr(0, 4);
 	mongo::BSONObj tmp;
-	if (version_header == "3.0." || version_header == "3.2." || version_header == "3.4.") {
+	if (version_header == "3.0." || version_header == "3.2." || version_header == "3.4." || version_header == "3.6." || version_header == "4.0.") {
 		mongo::BSONObj array;
 		if (!conn->runCommand(db, BSON("listCollections" << 1), tmp, mongo::QueryOption_SlaveOk)) {
 			LOG(FATAL) << "get " << db << "'s collections failed" << std::endl;
@@ -1121,7 +1121,7 @@ int MongoSync::GetCollIndexesByVersion(mongo::DBClientConnection* conn, std::str
 	NamespaceString ns(coll_full_name);
 	mongo::BSONObj tmp;
 	std::string version_header = version.substr(0, 4);
-	if (version_header == "3.0." || version_header == "3.2." || version_header == "3.4.") {
+	if (version_header == "3.0." || version_header == "3.2." || version_header == "3.4." || version_header == "3.6." || version_header == "4.0.") {
 		if (!conn->runCommand(ns.db(), BSON("listIndexes" << ns.coll()), tmp, mongo::QueryOption_SlaveOk)) {
 			LOG(FATAL) << coll_full_name << " get indexes failed" << std::endl;
 			return -1;
@@ -1150,7 +1150,7 @@ int MongoSync::GetCollIndexesByVersion(mongo::DBClientConnection* conn, std::str
 void MongoSync::SetCollIndexesByVersion(mongo::DBClientConnection* conn, std::string version, std::string coll_full_name, mongo::BSONObj index) {
 	std::string version_header = version.substr(0, 4);
 	NamespaceString ns(coll_full_name);
-	if (version_header == "3.0." || version_header == "3.2." || version_header == "3.4.") {
+	if (version_header == "3.0." || version_header == "3.2." || version_header == "3.4." || version_header == "3.6." || version_header == "4.0.") {
 		mongo::BSONObj tmp;
 		conn->runCommand(ns.db(), BSON("createIndexes" << ns.coll() << "indexes" << BSON_ARRAY(index)), tmp, mongo::QueryOption_SlaveOk);
 	} else if (version_header == "2.4." || version_header == "2.6.") {
